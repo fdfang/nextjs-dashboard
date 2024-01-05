@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
+import { adminEmail } from './app/lib/data';
 
 async function getUser(email: string): Promise<User | undefined> {
     try {
@@ -14,7 +15,7 @@ async function getUser(email: string): Promise<User | undefined> {
       console.error('Failed to fetch user:', error);
       throw new Error('Failed to fetch user.');
     }
-  }
+}
 
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -37,3 +38,8 @@ export const { auth, signIn, signOut } = NextAuth({
     },
   })],
 });
+
+export async function isAdmin(): Promise<boolean> {
+  const session = await auth();
+  return session?.user?.email === adminEmail;
+}

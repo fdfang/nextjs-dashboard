@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from 'next-auth';
- 
+import { adminEmail } from './app/lib/data';
+
 export const authConfig = {
   pages: {
     signIn: '/login',
@@ -7,8 +8,13 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
+      const isOnAdmin = nextUrl.pathname.startsWith('/dashboard/admin');
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-      if (isOnDashboard) {
+      
+      if (isOnAdmin) {
+        if (auth?.user && auth.user.email === adminEmail) return true;
+        return false;
+      } else if (isOnDashboard) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {

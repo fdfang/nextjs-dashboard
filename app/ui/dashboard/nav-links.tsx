@@ -4,6 +4,7 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
+  ComputerDesktopIcon
 } from '@heroicons/react/24/outline';
 
 // Map of links to display in the side navigation.
@@ -17,15 +18,22 @@ const links = [
   },
   { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
 ];
+const adminLinks = [
+  { name: 'Admin', href: '/dashboard/admin', icon: ComputerDesktopIcon },
+]
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
-export default function NavLinks() {
+export default function NavLinks({isAdmin}: {isAdmin: boolean}) {
   const pathName = usePathname();
+  let allLinks = links;
+  if(isAdmin) {
+    allLinks = links.concat(adminLinks);
+  }
   return (
     <>
-      {links.map((link) => {
+      {allLinks.map((link) => {
         const LinkIcon = link.icon;
         return (
           <Link
